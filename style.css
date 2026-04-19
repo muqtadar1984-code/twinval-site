@@ -101,18 +101,20 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding-right: 48px;
   font-family: 'Cinzel Decorative', serif;
   font-size: 22px;
   font-weight: 700;
   color: var(--gold-primary);
   letter-spacing: 0.03em;
+  flex-shrink: 0;
 }
 .nav__mark { width: 30px; height: 30px; }
 .nav__wordmark { line-height: 1; }
 
 .nav__links {
   display: flex;
-  gap: 32px;
+  gap: 28px;
   margin-left: auto;
   margin-right: 24px;
 }
@@ -257,9 +259,10 @@ h1, h2, h3, h4 {
   font-family: 'EB Garamond', serif;
   font-size: 18px;
   color: var(--white-muted);
-  max-width: 560px;
+  max-width: 680px;
   margin: 0 auto 48px;
   line-height: 1.55;
+  text-wrap: balance;
 }
 .hero__ctas {
   display: flex;
@@ -859,8 +862,8 @@ h1, h2, h3, h4 {
    REVEAL ANIMATION
    ═════════════════════════════════════════════════════════════════════════ */
 .reveal {
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 0.15;
+  transform: translateY(16px);
   transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
