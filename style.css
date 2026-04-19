@@ -739,6 +739,15 @@ h1, h2, h3, h4 {
   transform: translateY(-2px);
   background: #1E4269;
 }
+.dashboard--pending:hover {
+  border-color: rgba(201, 168, 76, 0.45);
+  transform: translateY(-2px);
+  background: #1E4269;
+}
+.dashboard--pending:hover .dashboard__cta--pending {
+  color: var(--gold-light);
+  border-top-color: rgba(201, 168, 76, 0.4);
+}
 .dashboard__status {
   display: inline-flex;
   align-items: center;
@@ -796,9 +805,9 @@ h1, h2, h3, h4 {
   padding-top: 8px;
   border-top: 1px solid rgba(201, 168, 76, 0.15);
 }
-.dashboard__cta--muted {
-  color: var(--white-muted);
-  opacity: 0.6;
+.dashboard__cta--pending {
+  color: var(--gold-subtle);
+  transition: color 0.3s ease, border-top-color 0.3s ease;
 }
 
 /* ═════════════════════════════════════════════════════════════════════════

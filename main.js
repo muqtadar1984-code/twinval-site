@@ -109,6 +109,29 @@
     });
   });
 
+  // ── Dashboard "Register interest" tiles ─────────────────────────────────
+  // When a pending dashboard tile is clicked, seed the contact form with the
+  // persona so the submission lands in Formspree pre-segmented, and prefill
+  // the message textarea if the user hasn't started typing.
+  const interestField = document.getElementById('f-interest');
+  const messageField = document.getElementById('f-msg');
+  const nameField = document.getElementById('f-name');
+
+  document.querySelectorAll('.dashboard[data-interest]').forEach((tile) => {
+    tile.addEventListener('click', () => {
+      const persona = tile.getAttribute('data-interest') || '';
+      if (!persona) return;
+
+      if (interestField) interestField.value = persona;
+      if (messageField && !messageField.value.trim()) {
+        messageField.value =
+          `I'd like to register interest in the ${persona} dashboard. Please keep me informed as it becomes available.`;
+      }
+      // Focus the name field after the browser finishes the hash-scroll
+      setTimeout(() => { if (nameField) nameField.focus({ preventScroll: true }); }, 600);
+    });
+  });
+
   // ── Demo terminal: cycling "verified" timestamp ──────────────────────────
   // Counts seconds upward between simulated block commits (13s cycle),
   // resetting to "just now" on each new commit. Gives the panel a live
