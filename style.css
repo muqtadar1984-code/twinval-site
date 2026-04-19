@@ -804,10 +804,40 @@ h1, h2, h3, h4 {
   color: var(--gold-light);
   padding-top: 8px;
   border-top: 1px solid rgba(201, 168, 76, 0.15);
+  text-decoration: none;
+  transition: color 0.3s ease, border-top-color 0.3s ease;
 }
 .dashboard__cta--pending {
   color: var(--gold-subtle);
-  transition: color 0.3s ease, border-top-color 0.3s ease;
+}
+
+/* Live tile: stacked primary + secondary CTAs */
+.dashboard__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(201, 168, 76, 0.15);
+}
+.dashboard__actions .dashboard__cta {
+  padding-top: 0;
+  border-top: none;
+}
+.dashboard__cta--primary {
+  color: var(--gold-light);
+}
+.dashboard__cta--secondary {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--gold-subtle);
+  opacity: 0.85;
+}
+.dashboard__cta--secondary:hover {
+  color: var(--gold-light);
+  opacity: 1;
+}
+.dashboard--live:hover .dashboard__cta--primary {
+  color: var(--gold-primary);
 }
 
 /* ═════════════════════════════════════════════════════════════════════════

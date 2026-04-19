@@ -117,7 +117,7 @@
   const messageField = document.getElementById('f-msg');
   const nameField = document.getElementById('f-name');
 
-  document.querySelectorAll('.dashboard[data-interest]').forEach((tile) => {
+  document.querySelectorAll('[data-interest]').forEach((tile) => {
     tile.addEventListener('click', () => {
       const persona = tile.getAttribute('data-interest') || '';
       if (!persona) return;
