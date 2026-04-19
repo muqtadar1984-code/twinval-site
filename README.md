@@ -113,8 +113,16 @@ Fonts load from Google Fonts. To swap any face, change the `<link>` tag in `inde
 ### Content
 All copy is in `index.html`. Search for the section you want (`<!-- HERO -->`, `<!-- PROBLEM -->`, etc.) and edit.
 
-### Live demo URL
-To change the dashboard link, search `main.js` and `index.html` for `propexchangev1.vercel.app`.
+### Live demo & dashboard URLs
+The "Open Live Demo" CTA points at the Streamlit exchange app:
+- `https://propexchange.streamlit.app/` — full pipeline + exchange view (Demo section)
+
+The Dashboards section links the live REIT portal:
+- `https://propexchangev1.vercel.app/` — Islamic REIT / REIT dashboard
+
+Search `index.html` for either URL to change them. The Banks, Insurers, Valuers,
+and Proptech dashboards are placeholders until those portals are built; update
+their `<article>` tiles to `<a>` elements with real URLs when ready.
 
 ---
 
