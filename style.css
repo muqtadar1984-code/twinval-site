@@ -271,6 +271,41 @@ h1, h2, h3, h4 {
   flex-wrap: wrap;
 }
 
+/* Patent Pending badge — understated, letterhead tone */
+.hero__patent {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  padding: 8px 18px;
+  border: 1px solid rgba(201, 168, 76, 0.28);
+  border-radius: 2px;
+  background: rgba(201, 168, 76, 0.04);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-subtle);
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.hero__patent:hover {
+  color: var(--gold-light);
+  border-color: rgba(201, 168, 76, 0.55);
+  background: rgba(201, 168, 76, 0.08);
+}
+.hero__patent-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-primary);
+  box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4);
+  animation: patent-pulse 2.6s ease-in-out infinite;
+}
+@keyframes patent-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4); }
+  50%      { box-shadow: 0 0 0 6px rgba(201, 168, 76, 0); }
+}
+
 .hero__scroll {
   position: absolute;
   bottom: 40px;
@@ -541,6 +576,19 @@ h1, h2, h3, h4 {
 /* ═════════════════════════════════════════════════════════════════════════
    AUDIENCE
    ═════════════════════════════════════════════════════════════════════════ */
+.audience__lede {
+  max-width: 780px;
+  margin-bottom: 56px;
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--white-muted);
+}
+.audience__lede em {
+  font-style: italic;
+  color: var(--gold-light);
+  letter-spacing: 0.01em;
+}
 .audience__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

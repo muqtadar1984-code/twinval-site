@@ -109,4 +109,21 @@
     });
   });
 
+  // ── Demo terminal: cycling "verified" timestamp ──────────────────────────
+  // Counts seconds upward between simulated block commits (13s cycle),
+  // resetting to "just now" on each new commit. Gives the panel a live
+  // pulse without being gimmicky. Respects reduced-motion preference.
+  const verifiedEl = document.getElementById('verifiedTs');
+  const prefersReducedMotion =
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (verifiedEl && !prefersReducedMotion) {
+    const CYCLE_SECONDS = 13;
+    let secs = 0;
+    setInterval(() => {
+      secs = (secs + 1) % CYCLE_SECONDS;
+      verifiedEl.textContent = secs === 0 ? 'just now' : `${secs}s ago`;
+    }, 1000);
+  }
+
 })();
