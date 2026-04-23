@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/reit",
+      "destination": "https://propexchangev1.vercel.app",
+      "permanent": false
+    },
+    {
+      "source": "/individual",
+      "destination": "https://propexchangev1.vercel.app/individual",
+      "permanent": false
+    }
+  ]
+}
