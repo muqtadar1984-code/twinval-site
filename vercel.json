@@ -2,12 +2,12 @@
   "redirects": [
     {
       "source": "/reit",
-      "destination": "https://propexchangev1.vercel.app",
+      "destination": "https://app.twinval.com",
       "permanent": false
     },
     {
       "source": "/individual",
-      "destination": "https://propexchangev1.vercel.app/individual",
+      "destination": "https://app.twinval.com/individual",
       "permanent": false
     }
   ]
