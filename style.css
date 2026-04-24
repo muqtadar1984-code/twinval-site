@@ -95,7 +95,8 @@ h1, h2, h3, h4 {
   padding: 22px var(--gutter);
   display: flex;
   align-items: center;
-  gap: 32px;
+  justify-content: space-between;
+  position: relative;
 }
 .nav__brand {
   display: flex;
@@ -113,11 +114,10 @@ h1, h2, h3, h4 {
 
 .nav__links {
   display: flex;
-  flex: 1;
-  justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   gap: 22px;
-  margin-left: 0;
-  margin-right: 0;
 }
 .nav__links a {
   font-family: 'Cinzel', serif;
