@@ -95,8 +95,7 @@ h1, h2, h3, h4 {
   padding: 22px var(--gutter);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
+  gap: 32px;
 }
 .nav__brand {
   display: flex;
@@ -108,15 +107,15 @@ h1, h2, h3, h4 {
   color: var(--gold-primary);
   letter-spacing: 0.03em;
   flex-shrink: 0;
+  min-width: 171px;
 }
 .nav__mark { width: 30px; height: 30px; }
 .nav__wordmark { line-height: 1; }
 
 .nav__links {
   display: flex;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 1;
+  justify-content: center;
   gap: 22px;
 }
 .nav__links a {
