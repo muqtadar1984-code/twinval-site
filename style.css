@@ -271,6 +271,22 @@ h1, h2, h3, h4 {
   flex-wrap: wrap;
 }
 
+/* Hero tertiary link — for property owners */
+.hero__owners-link {
+  display: block;
+  margin: 24px auto 0;
+  font-family: 'EB Garamond', 'Cormorant Garamond', serif;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--gold-subtle);
+  letter-spacing: 0.02em;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+.hero__owners-link:hover {
+  color: var(--gold-light);
+}
+
 /* Patent Pending badge — understated, letterhead tone */
 .hero__patent {
   display: inline-flex;
