@@ -279,12 +279,19 @@ Health Factor = SHF × ESF × (1 &minus; USS) × PDP × CI</pre>
               engine, exchange order book, and hash-chain audit are all
               operational in real time.
             </p>
-            <a href="https://propexchange.streamlit.app/" class="btn btn--gold btn--large btn--pulse" target="_blank" rel="noopener">
-              Open Live Demo
-              <span class="btn__arrow" aria-hidden="true">&rarr;</span>
-            </a>
+            <div class="demo__cta-row" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+              <a href="https://propexchange.streamlit.app/" class="btn btn--gold btn--large btn--pulse" target="_blank" rel="noopener">
+                Open Live Demo
+                <span class="btn__arrow" aria-hidden="true">&rarr;</span>
+              </a>
+              <a href="/go-demo/" class="btn btn--outline btn--large" rel="noopener" style="border:1px solid var(--gold-primary);color:var(--gold-light);padding:14px 28px;border-radius:4px;font-family:'Cinzel',serif;letter-spacing:0.08em;text-transform:uppercase;font-size:14px;display:inline-flex;align-items:center;gap:10px">
+                Open Go Backend Demo
+                <span class="btn__arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
             <p class="demo__disclaimer reveal" data-delay="400">
               Proof-of-concept deployment. Live IoT sensor integration in development.
+              <br/><span style="color:var(--gold-subtle);font-size:13px">Go backend: production-ready rewrite of the Streamlit POC, exposing REST + WebSocket. Tamper-evident SHA-256 cryptochain visible in the Go demo.</span>
             </p>
           </div>
 
