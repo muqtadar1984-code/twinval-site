@@ -158,7 +158,7 @@
   <header class="hdr">
     <div>
       <h1 class="hdr__title">TwinVal &mdash; Go Backend, Live</h1>
-      <div class="hdr__sub">Patent Module 310&ndash;360 &middot; Production deployment &middot; Real-time pipeline</div>
+      <div class="hdr__sub">Patent Module 310&ndash;360 &middot; ASHRAE GEPIII profiles &middot; Real-time pipeline</div>
       <div style="margin-top:10px"><a href="/" class="hdr__back">&larr; back to twinval.com</a></div>
     </div>
     <div class="hdr__right">
@@ -166,9 +166,13 @@
         <span class="ws__dot"></span>
         <span class="ws__label">connecting&hellip;</span>
       </div>
-      <div style="font-family:var(--mono); font-size:11px; color:var(--white-muted); letter-spacing:0.05em">
-        property: <span style="color:var(--gold-light)">PROP-ASHRAE-001</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label for="property-picker" style="font-family:var(--mono);font-size:11px;color:var(--white-muted);letter-spacing:0.08em;text-transform:uppercase">property</label>
+        <select id="property-picker" style="background:var(--navy-deep);color:var(--gold-light);border:1px solid var(--navy-elev);border-radius:4px;padding:6px 10px;font-family:var(--mono);font-size:12px;cursor:pointer;min-width:220px">
+          <option value="">loading&hellip;</option>
+        </select>
       </div>
+      <div id="property-meta" style="font-family:var(--mono);font-size:11px;color:var(--white-muted);text-align:right">&mdash;</div>
     </div>
   </header>
 
@@ -263,20 +267,28 @@
 (() => {
   'use strict';
 
-  const API_BASE   = 'https://twinval-go-backend-production.up.railway.app';
-  const PROPERTY   = 'PROP-ASHRAE-001';
-  const WS_URL     = `wss://twinval-go-backend-production.up.railway.app/ws/property/${PROPERTY}`;
+  const API_BASE  = 'https://twinval-go-backend-production.up.railway.app';
+  const WS_BASE   = 'wss://twinval-go-backend-production.up.railway.app';
+
+  // Multi-property: ASHRAE-mode backend exposes 5 buildings. The
+  // dropdown is populated from /api/v1/properties on boot. Until the
+  // first response, we fall back to the first building key so the
+  // demo doesn't no-op when the backend is briefly unreachable.
+  const FALLBACK_PROPERTY = 'MY-KL-OFF-KLCC';
 
   document.getElementById('api-base').textContent = API_BASE;
-  document.getElementById('ws-url').textContent   = WS_URL;
+  document.getElementById('ws-url').textContent   = WS_BASE;
 
   const $ = (id) => document.getElementById(id);
 
   const STATE = {
-    chain: [],
+    currentProperty: FALLBACK_PROPERTY,
+    properties: [],     // [{ property_id, name, primary_use, govt_valuation, ... }]
     autoStream: false,
     autoTimer: null,
     seenTokenIds: new Set(),
+    ws: null,
+    wsRetry: 0,
   };
 
   const fmtMYR = (v) => 'RM ' + Math.round(v).toLocaleString('en-MY');
@@ -376,13 +388,18 @@
     }
   }
 
+  async function fetchProperties() {
+    const r = await fetch(`${API_BASE}/api/v1/properties`);
+    if (!r.ok) throw new Error(`properties: ${r.status}`);
+    return r.json();
+  }
   async function fetchValuation() {
-    const r = await fetch(`${API_BASE}/api/v1/property/${PROPERTY}/valuation`);
+    const r = await fetch(`${API_BASE}/api/v1/property/${STATE.currentProperty}/valuation`);
     if (!r.ok) throw new Error(`valuation: ${r.status}`);
     return r.json();
   }
   async function fetchChain(limit = 20) {
-    const r = await fetch(`${API_BASE}/api/v1/property/${PROPERTY}/chain?limit=${limit}`);
+    const r = await fetch(`${API_BASE}/api/v1/property/${STATE.currentProperty}/chain?limit=${limit}`);
     if (!r.ok) throw new Error(`chain: ${r.status}`);
     return r.json();
   }
@@ -393,7 +410,7 @@
     const vibration = stress ? 0.25 : r(0.01, 0.08);
     const strain   = stress ? 700.0 : r(50, 300);
     return {
-      property_id: PROPERTY,
+      property_id: STATE.currentProperty,
       window_start_ns: now - 1_000_000_000,
       window_end_ns: now,
       readings: [
@@ -429,33 +446,88 @@
     }
   }
 
-  // WebSocket — live updates push state & trigger chain refresh
-  let ws = null;
-  let wsRetry = 0;
+  // WebSocket lifecycle — keyed by STATE.currentProperty.
   function connectWS() {
+    if (STATE.ws) {
+      try { STATE.ws.onclose = null; STATE.ws.close(); } catch (_) {}
+      STATE.ws = null;
+    }
     setWS('off', 'connecting…');
+    let ws;
     try {
-      ws = new WebSocket(WS_URL);
+      ws = new WebSocket(`${WS_BASE}/ws/property/${STATE.currentProperty}`);
     } catch (e) {
       setWS('off', 'failed');
       return;
     }
-    ws.onopen = () => { wsRetry = 0; setWS('on', 'live'); };
+    STATE.ws = ws;
+    ws.onopen = () => { STATE.wsRetry = 0; setWS('on', 'live'); };
     ws.onmessage = (e) => {
       try {
         const msg = JSON.parse(e.data);
+        // Drop messages for a stale property selection.
+        if (msg.property_id && msg.property_id !== STATE.currentProperty) return;
         renderValuation(msg);
-        // Chain may have grown; lightweight refetch
         fetchChain(20).then(c => renderChain(c.tokens || [], c.total || 0)).catch(() => {});
       } catch (_) {}
     };
     ws.onclose = () => {
+      // Only auto-reconnect if this is still the active socket.
+      if (STATE.ws !== ws) return;
       setWS('off', 'reconnecting…');
-      wsRetry = Math.min(wsRetry + 1, 6);
-      setTimeout(connectWS, 1000 * wsRetry);
+      STATE.wsRetry = Math.min(STATE.wsRetry + 1, 6);
+      setTimeout(connectWS, 1000 * STATE.wsRetry);
     };
     ws.onerror = () => { try { ws.close(); } catch (_) {} };
   }
+
+  // Property dropdown population + change handling.
+  function fmtMillions(v) {
+    if (!v) return '—';
+    if (v >= 1e9) return 'RM ' + (v / 1e9).toFixed(2) + 'B';
+    return 'RM ' + (v / 1e6).toFixed(1) + 'M';
+  }
+  function setPropertyMeta(p) {
+    if (!p) { $('property-meta').textContent = '—'; return; }
+    $('property-meta').innerHTML = `${p.primary_use || ''} · valuation ${fmtMillions(p.govt_valuation)}`;
+  }
+  async function loadProperties() {
+    try {
+      const list = await fetchProperties();
+      STATE.properties = list.properties || [];
+      const picker = $('property-picker');
+      picker.innerHTML = '';
+      if (!STATE.properties.length) {
+        const o = document.createElement('option');
+        o.value = ''; o.textContent = '(no properties registered)';
+        picker.appendChild(o);
+        return;
+      }
+      for (const p of STATE.properties) {
+        const o = document.createElement('option');
+        o.value = p.property_id;
+        o.textContent = `${p.name || p.property_id} · ${p.property_id}`;
+        picker.appendChild(o);
+      }
+      // Pick the first as default; fall back to whatever is current if it exists.
+      if (!STATE.properties.find(p => p.property_id === STATE.currentProperty)) {
+        STATE.currentProperty = STATE.properties[0].property_id;
+      }
+      picker.value = STATE.currentProperty;
+      setPropertyMeta(STATE.properties.find(p => p.property_id === STATE.currentProperty));
+    } catch (e) {
+      showError(`couldn't load property list: ${e.message}`);
+    }
+  }
+  function switchProperty(newId) {
+    if (newId === STATE.currentProperty) return;
+    STATE.currentProperty = newId;
+    STATE.seenTokenIds.clear();
+    setPropertyMeta(STATE.properties.find(p => p.property_id === newId));
+    refresh();
+    connectWS();
+  }
+  $('property-picker').addEventListener('change', (e) => switchProperty(e.target.value));
 
   // Buttons
   $('btn-batch').addEventListener('click', async () => {
@@ -485,9 +557,12 @@
     }
   });
 
-  // Boot
-  refresh();
-  connectWS();
+  // Boot — populate dropdown, then start fetching/streaming.
+  (async () => {
+    await loadProperties();
+    refresh();
+    connectWS();
+  })();
 })();
 </script>
 </body>
