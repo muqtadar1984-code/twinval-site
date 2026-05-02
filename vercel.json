@@ -10,5 +10,9 @@
       "destination": "https://app.twinval.com/individual",
       "permanent": false
     }
+  ],
+  "rewrites": [
+    { "source": "/entry",        "destination": "https://twinval-entry.vercel.app/entry" },
+    { "source": "/entry/:path*", "destination": "https://twinval-entry.vercel.app/entry/:path*" }
   ]
 }
